@@ -1,13 +1,10 @@
-# Getting Started with Create React App
+# Mango - frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
-# Overview
 This is the frontend of Mango, a project spun-out from a hackathon in march 2025
 
 just start with usual methods below
 currently, ngrok url from the backend changes on every server start
-so, the two api calls to backed need their urls updating every time
+so, the two api calls to backed need their urls updating every time - app.js 182 and 201
 
 
 ## Available Scripts
