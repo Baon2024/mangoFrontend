@@ -297,7 +297,7 @@ export default function App() {
         const success = await makePhoneCall(phoneNumber); //this is where call to backend for blank.ai phone call occurs
         //its clear to me that should also send the contextPrompt too, to send relevant answers 
         //but first lets just get a basic call working
-        console.log("value of firstCall is:", success);
+        console.log(`Starting call for number ${phoneNumber}:`, success);
       }
 
       
