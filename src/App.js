@@ -179,7 +179,7 @@ export default function App() {
       //need to replace prompt with realPrompt below
       console.log("realPrompt is:", realPrompt);
 
-      const response1 = await fetch('https://mangoexpressbackend.onrender.com/outbound-call', { //so this sends data to backend
+      const response1 = await fetch('https://a68c-131-111-185-176.ngrok-free.app/outbound-call', { //so this sends data to backend
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -193,26 +193,31 @@ export default function App() {
         })
       });
 
-      //this second step is after a setTimer delay, and retrieves the returned correctResponse
+      console.log("response from first api call is:", response1);
 
-      // **Wait for response after delay**
-      let time = 50000 * questionNumber
-      console.log("time is:", time);
+      const data = await response1.json()
+      return data
 
-    await new Promise(resolve => setTimeout(resolve, time));
+    } catch (error) {
+      console.error(`Error initiating call to ${phoneNumber}:`, error);
+      return false;
+    }
+  };
 
-    const response = await fetch('https://mangoexpressbackend.onrender.com/retrieve-response', {
+  const followUpCall = async (number) => {
+
+    const response = await fetch(`https://a68c-131-111-185-176.ngrok-free.app/retrieve-response/${number}`, {
       method: 'GET',
       headers: {
-        'Content-Type': 'application/json', // Ensure the server knows you expect JSON
-        'Cache-Control': 'no-cache', // Prevent caching
+        'Content-Type': 'application/json',  // This is fine, since you'll still be expecting JSON in the response
+        'Cache-Control': 'no-cache',         // Prevent caching
         'ngrok-skip-browser-warning': 'true',
-    'Pragma': 'no-cache',        // Additional header to prevent caching
-    "redirect": 'follow'
+        'Pragma': 'no-cache',                // Additional header to prevent caching
+        'redirect': 'follow'                 // Handle redirects
       },
-      mode: 'cors' // Needed if calling from a browser to an external domain
+      mode: 'cors'  // Needed if calling from a browser to an external domain
     });
-        
+    
 
     if (!response.ok) {
       throw new Error(`Error: ${response.status}`);
@@ -222,11 +227,12 @@ export default function App() {
     console.log("Data returned:", data);
     
     return data; // ✅ Returns response properly
-    } catch (error) {
-      console.error(`Error initiating call to ${phoneNumber}:`, error);
-      return false;
-    }
-  };
+  }
+
+
+
+
+
 
   const handleEnrichClick = async () => {
     //need to replace this all with my code, passing down spreadsheetData as a child to be used by this function
@@ -291,7 +297,23 @@ export default function App() {
         const success = await makePhoneCall(phoneNumber); //this is where call to backend for blank.ai phone call occurs
         //its clear to me that should also send the contextPrompt too, to send relevant answers 
         //but first lets just get a basic call working
-        console.log("value of success is:", success);
+        console.log(`Starting call for number ${phoneNumber}:`, success);
+      }
+
+      
+      const questionNumber = question.length;
+
+      let time = 50000 * questionNumber
+      console.log("time is:", time);
+
+      await new Promise(resolve => setTimeout(resolve, time));
+
+      for (const phoneNumber of phoneNumbers) {
+        
+        const success = await followUpCall(phoneNumber);
+        console.log("value of followUpCall is:", success);
+
+        //then function for follow-up call to retrieve answer from each
         
         if (success) {
           successCount++;
