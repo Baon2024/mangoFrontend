@@ -19,7 +19,7 @@ export default function App() {
   const [ columnLabels, setColumnLabels ] = useState(["Phone Number"]);
   const [contextText, setContextText] = useState("This spreadsheet contains contact information for various professionals.");
   const [data, setData] = useState([
-    [{ value: "+447311252643" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }],
+    [{ value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }],
     [{ value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }],
     [{ value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }],
     [{ value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }],
@@ -179,7 +179,7 @@ export default function App() {
       //need to replace prompt with realPrompt below
       console.log("realPrompt is:", realPrompt);
 
-      const response1 = await fetch('https://mangoexpressbackend.onrender.com/outbound-call', { //so this sends data to backend
+      const response1 = await fetch(' https://e3d9-79-173-167-131.ngrok-free.app/outbound-call', { //so this sends data to backend
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -196,12 +196,12 @@ export default function App() {
       //this second step is after a setTimer delay, and retrieves the returned correctResponse
 
       // **Wait for response after delay**
-      let time = 50000 * questionNumber
+      let time = 35000 * questionNumber
       console.log("time is:", time);
 
     await new Promise(resolve => setTimeout(resolve, time));
 
-    const response = await fetch('https://mangoexpressbackend.onrender.com/retrieve-response', {
+    const response = await fetch('https://e3d9-79-173-167-131.ngrok-free.app/retrieve-response', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json', // Ensure the server knows you expect JSON
@@ -397,7 +397,7 @@ export default function App() {
 
   return (
     <div className="App">
-        <TopBar handleEnrichClick={handleEnrichClick} data={data}  addRow={addRow} addColumn={addColumn} columnLabels={columnLabels} setColumnLabels={setColumnLabels} shuffleHandler={shuffleHandler} callStatus={callStatus} isLoading={isLoading} />
+        <TopBar handleEnrichClick={handleEnrichClick} data={data} setData={setData} addRow={addRow} addColumn={addColumn} columnLabels={columnLabels} setColumnLabels={setColumnLabels} shuffleHandler={shuffleHandler} callStatus={callStatus} isLoading={isLoading} />
         <Spreadsheet data={data} onChange={setData} columnLabels={columnLabels} styles={customStyles} />
         <ContextDrawer onContextUpdate={handleContextUpdate} contextData={contextText} question={question} setQuestion={setQuestion} />
     </div>
