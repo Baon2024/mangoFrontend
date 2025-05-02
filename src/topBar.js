@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { CircularProgress, AppBar, Toolbar, Menu, MenuItem, Snackbar, IconButton } from "@mui/material";
 import { FaPhone, FaTable } from 'react-icons/fa';
 import { FaClockRotateLeft, FaCheck, FaTriangleExclamation } from "react-icons/fa6";
@@ -17,7 +17,7 @@ import {
 import { Toaster } from './components/toast';
 //import { useToast } from "@/hooks/use-toast"
 
-export default function TopBar({ handleEnrichClick, addRow, addColumn, shuffleHandler, callStatus, isLoading, data, columnLabels}) {
+export default function TopBar({ handleEnrichClick, addRow, addColumn, shuffleHandler, callStatus, isLoading, data, setData, columnLabels}) {
   //const [isLoading, setIsLoading] = useState(false);
   //const [callStatus, setCallStatus] = useState({ success: 0, failed: 0, total: 0 });
   const [showToast, setShowToast] = useState(false);
@@ -25,6 +25,7 @@ export default function TopBar({ handleEnrichClick, addRow, addColumn, shuffleHa
   const [toastType, setToastType] = useState('success');
   const [anchorEl, setAnchorEl] = useState(null); // For Menu dropdown
   const openMenu = Boolean(anchorEl);
+  const fileInputRef = useRef()
 
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -71,6 +72,57 @@ export default function TopBar({ handleEnrichClick, addRow, addColumn, shuffleHa
      link.click(); // Simulate a click to trigger the download
   }
 
+  async function importHandler() {
+    fileInputRef.current.click();
+  }
+
+  function handleFileChange(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+  
+    const reader = new FileReader();
+  
+    reader.onload = (e) => {
+      const text = e.target.result;
+      const rawRows = text.split("\n").map((row) => row.split(","));
+      console.log("Imported CSV rows:", rawRows);
+      // Handle rows here (e.g., set to state)
+      // Transform each cell into { value: cell }
+    const formattedRows = rawRows.map(row => row.map(cell => ({ value: cell })));
+
+    console.log("Formatted rows:", formattedRows);
+
+    function mergeCsvIntoTable(initialData, csvData) {
+      const maxRows = initialData.length;
+      const maxCols = initialData[0]?.length || 0;
+    
+      return initialData.map((row, rowIndex) => {
+        return row.map((cell, colIndex) => {
+          const csvCell = csvData?.[rowIndex]?.[colIndex];
+          if (colIndex === 0) {
+            const rawPhone = csvCell?.value ? csvCell?.value.toString().trim().replace(/\r?\n|\r/g, '') : "";
+            const cleanedPhone = rawPhone
+    ? (rawPhone.startsWith('+44') ? rawPhone : `+44${rawPhone}`)
+    : '';
+            return {
+              value: cleanedPhone || (cell.value ?? ''),
+            };
+          }
+      
+          return {
+            value: csvCell?.value ?? cell.value ?? '',
+          };
+        });
+      });
+    }
+
+    // Option 1: Replace the existing grid
+    setData(prev=> mergeCsvIntoTable(data, formattedRows));
+    };
+  
+    reader.readAsText(file);
+  }
+
   
 
   return (
@@ -115,6 +167,16 @@ export default function TopBar({ handleEnrichClick, addRow, addColumn, shuffleHa
             >
               
               Shuffle
+            </Button>
+
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={importHandler}
+              className="bg-white/10 hover:bg-white/20 text-white border border-white/20"
+            >
+              
+              Import CSV
             </Button>
 
             <Button
@@ -199,6 +261,13 @@ export default function TopBar({ handleEnrichClick, addRow, addColumn, shuffleHa
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+            <input
+  type="file"
+  accept=".csv"
+  ref={fileInputRef}
+  style={{ display: "none" }}
+  onChange={handleFileChange}
+/>
           </div>
         </div>
       </header>

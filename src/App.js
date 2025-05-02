@@ -179,7 +179,7 @@ export default function App() {
       //need to replace prompt with realPrompt below
       console.log("realPrompt is:", realPrompt);
 
-      const response1 = await fetch('https://a68c-131-111-185-176.ngrok-free.app/outbound-call', { //so this sends data to backend
+      const response1 = await fetch('https://f520-79-173-167-131.ngrok-free.app/outbound-call', { //so this sends data to backend
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -206,7 +206,7 @@ export default function App() {
 
   const followUpCall = async (number) => {
 
-    const response = await fetch(`https://a68c-131-111-185-176.ngrok-free.app/retrieve-response/${number}`, {
+    const response = await fetch(`https://f520-79-173-167-131.ngrok-free.app/retrieve-response/${number}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',  // This is fine, since you'll still be expecting JSON in the response
@@ -303,7 +303,7 @@ export default function App() {
       
       const questionNumber = question.length;
 
-      let time = 50000 * questionNumber
+      let time = 40000 * questionNumber
       console.log("time is:", time);
 
       await new Promise(resolve => setTimeout(resolve, time));
@@ -419,7 +419,7 @@ export default function App() {
 
   return (
     <div className="App">
-        <TopBar handleEnrichClick={handleEnrichClick} data={data}  addRow={addRow} addColumn={addColumn} columnLabels={columnLabels} setColumnLabels={setColumnLabels} shuffleHandler={shuffleHandler} callStatus={callStatus} isLoading={isLoading} />
+        <TopBar handleEnrichClick={handleEnrichClick} data={data} setData={setData} addRow={addRow} addColumn={addColumn} columnLabels={columnLabels} setColumnLabels={setColumnLabels} shuffleHandler={shuffleHandler} callStatus={callStatus} isLoading={isLoading} />
         <Spreadsheet data={data} onChange={setData} columnLabels={columnLabels} styles={customStyles} />
         <ContextDrawer onContextUpdate={handleContextUpdate} contextData={contextText} question={question} setQuestion={setQuestion} />
     </div>
